@@ -67,6 +67,7 @@ type oldEndpoint struct {
 	ProjectID          string            `json:"project_id" db:"project_id"`
 	OwnerID            string            `json:"owner_id,omitempty" db:"owner_id"`
 	TargetURL          string            `json:"target_url" db:"target_url"`
+	TargetHTTPMethod   string            `json:"target_http_method" db:"target_http_method"`
 	Title              string            `json:"title" db:"title"`
 	Secrets            datastore.Secrets `json:"secrets" db:"secrets"`
 	AdvancedSignatures bool              `json:"advanced_signatures" db:"advanced_signatures"`

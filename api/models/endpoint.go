@@ -46,6 +46,8 @@ type CreateEndpoint struct {
 	// Define endpoint http timeout in seconds.
 	HttpTimeout uint64 `json:"http_timeout" copier:"-"`
 
+	TargetHttpMethod string `json:"target_http_method"`
+
 	// Rate limit is the total number of requests to be sent to an endpoint in
 	// the time duration specified in RateLimitDuration
 	RateLimit int `json:"rate_limit"`
@@ -78,6 +80,7 @@ type UpdateEndpoint struct {
 	SlackWebhookURL    *string `json:"slack_webhook_url"`
 
 	HttpTimeout       uint64                  `json:"http_timeout" copier:"-"`
+	TargetHttpMethod  string                  `json:"target_http_method"`
 	RateLimit         int                     `json:"rate_limit"`
 	RateLimitDuration uint64                  `json:"rate_limit_duration" copier:"-"`
 	Authentication    *EndpointAuthentication `json:"authentication"`

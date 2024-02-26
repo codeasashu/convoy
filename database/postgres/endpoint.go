@@ -5,12 +5,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/frain-dev/convoy"
 	"github.com/frain-dev/convoy/cache"
 	ncache "github.com/frain-dev/convoy/cache/noop"
 	"github.com/frain-dev/convoy/config"
-	"strings"
-	"time"
 
 	"github.com/frain-dev/convoy/database"
 	"github.com/frain-dev/convoy/database/hooks"
@@ -29,7 +31,7 @@ var (
 const (
 	createEndpoint = `
 	INSERT INTO convoy.endpoints (
-		id, title, status, secrets, owner_id, target_url, description, http_timeout,
+		id, title, status, secrets, owner_id, target_url, target_http_method, description, http_timeout,
 		rate_limit, rate_limit_duration, advanced_signatures, slack_webhook_url,
 		support_email, app_id, project_id, authentication_type, authentication_type_api_key_header_name,
 		authentication_type_api_key_header_value
@@ -37,7 +39,7 @@ const (
 	VALUES
 	  (
 		$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,
-		$14, $15, $16, $17, $18
+		$14, $15, $16, $17, $18, $19
 	  );
 	`
 
@@ -81,7 +83,7 @@ const (
 	rate_limit = $9, rate_limit_duration = $10, advanced_signatures = $11,
 	slack_webhook_url = $12, support_email = $13,
 	authentication_type = $14, authentication_type_api_key_header_name = $15,
-	authentication_type_api_key_header_value = $16, secrets = $17,
+	authentication_type_api_key_header_value = $16, secrets = $17, target_http_method = $18,
 	updated_at = NOW()
 	WHERE id = $1 AND project_id = $2 AND deleted_at IS NULL;
 	`
@@ -193,11 +195,13 @@ func (e *endpointRepo) CreateEndpoint(ctx context.Context, endpoint *datastore.E
 	ac := endpoint.GetAuthConfig()
 
 	args := []interface{}{
-		endpoint.UID, endpoint.Title, endpoint.Status, endpoint.Secrets, endpoint.OwnerID, endpoint.TargetURL,
+		endpoint.UID, endpoint.Title, endpoint.Status, endpoint.Secrets, endpoint.OwnerID, endpoint.TargetURL, endpoint.TargetHTTPMethod,
 		endpoint.Description, endpoint.HttpTimeout, endpoint.RateLimit, endpoint.RateLimitDuration,
 		endpoint.AdvancedSignatures, endpoint.SlackWebhookURL, endpoint.SupportEmail, endpoint.AppID,
 		projectID, ac.Type, ac.ApiKey.HeaderName, ac.ApiKey.HeaderValue,
 	}
+
+	log.Printf("DB Args: %s", args)
 
 	result, err := e.db.ExecContext(ctx, createEndpoint, args...)
 	if err != nil {
@@ -287,7 +291,7 @@ func (e *endpointRepo) UpdateEndpoint(ctx context.Context, endpoint *datastore.E
 	r, err := e.db.ExecContext(ctx, updateEndpoint, endpoint.UID, projectID, endpoint.Title, endpoint.Status, endpoint.OwnerID, endpoint.TargetURL,
 		endpoint.Description, endpoint.HttpTimeout, endpoint.RateLimit, endpoint.RateLimitDuration,
 		endpoint.AdvancedSignatures, endpoint.SlackWebhookURL, endpoint.SupportEmail,
-		ac.Type, ac.ApiKey.HeaderName, ac.ApiKey.HeaderValue, endpoint.Secrets,
+		ac.Type, ac.ApiKey.HeaderName, ac.ApiKey.HeaderValue, endpoint.Secrets, endpoint.TargetHTTPMethod,
 	)
 	if err != nil {
 		return err

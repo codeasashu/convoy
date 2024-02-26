@@ -19,6 +19,8 @@ import { EndpointsService } from '../../pages/project/endpoints/endpoints.servic
 import { NotificationComponent } from 'src/app/components/notification/notification.component';
 import { ConfigButtonComponent } from '../config-button/config-button.component';
 import { CopyButtonComponent } from 'src/app/components/copy-button/copy-button.component';
+import { SelectComponent } from 'src/app/components/select/select.component';
+
 
 @Component({
 	selector: 'convoy-create-endpoint',
@@ -39,7 +41,8 @@ import { CopyButtonComponent } from 'src/app/components/copy-button/copy-button.
 		PermissionDirective,
 		NotificationComponent,
 		ConfigButtonComponent,
-		CopyButtonComponent
+		CopyButtonComponent,
+	    SelectComponent
 	],
 	templateUrl: './create-endpoint.component.html',
 	styleUrls: ['./create-endpoint.component.scss']
@@ -63,6 +66,7 @@ export class CreateEndpointComponent implements OnInit {
 		owner_id: [null],
 		rate_limit: [null],
 		rate_limit_duration: [null],
+	    target_http_method: [null, Validators.required],
 		authentication: this.formBuilder.group({
 			type: ['api_key'],
 			api_key: this.formBuilder.group({
@@ -78,6 +82,7 @@ export class CreateEndpointComponent implements OnInit {
 	configurations = [{ uid: 'http_timeout', name: 'Timeout ', show: false }];
 	endpointCreated: boolean = false;
 	endpointSecret?: SECRET;
+	httpMethods = ["GET", "POST"]
 	private rbacService = inject(RbacService);
 
 	constructor(

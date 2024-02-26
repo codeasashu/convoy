@@ -68,6 +68,7 @@ func (a *CreateEndpointService) Run(ctx context.Context) (*datastore.Endpoint, e
 		Description:        a.E.Description,
 		RateLimit:          a.E.RateLimit,
 		HttpTimeout:        a.E.HttpTimeout,
+		TargetHTTPMethod:   a.E.TargetHttpMethod,
 		AdvancedSignatures: *a.E.AdvancedSignatures,
 		AppID:              a.E.AppID,
 		RateLimitDuration:  a.E.RateLimitDuration,

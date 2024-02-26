@@ -57,6 +57,7 @@ func updateEndpoint(endpoint *datastore.Endpoint, e models.UpdateEndpoint, proje
 	endpoint.Description = e.Description
 
 	endpoint.Title = *e.Name
+	endpoint.TargetHTTPMethod = e.TargetHttpMethod
 
 	if e.SupportEmail != nil {
 		endpoint.SupportEmail = *e.SupportEmail

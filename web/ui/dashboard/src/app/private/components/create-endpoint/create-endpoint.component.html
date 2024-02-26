@@ -14,6 +14,15 @@
 					<convoy-input-error *ngIf="addNewEndpointForm.get('url')?.touched && addNewEndpointForm.get('url')?.invalid">Invalid endpoint URL</convoy-input-error>
 				</convoy-input-field>
 			</div>
+		    <convoy-select
+                label="Endpoint HTTP Method"
+                [required]="true"
+                errorMessage="Please select method"
+                name="target_http_method"
+                formControlName="target_http_method"
+                (selectedOption)="addNewEndpointForm.patchValue({ target_http_method: $event })"
+                [options]="httpMethods">
+            </convoy-select>
 
 			<convoy-input-field className="mb-24px">
 				<label for="secret" convoy-label>Endpoint Secret</label>
